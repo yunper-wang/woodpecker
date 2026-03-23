@@ -15,6 +15,7 @@
 package matrix
 
 import (
+	"fmt"
 	"strings"
 
 	"codeberg.org/6543/xyaml"
@@ -23,8 +24,8 @@ import (
 )
 
 const (
-	limitTags = 10
-	limitAxis = 25
+	defaultLimitTags = 10
+	defaultLimitAxis = 25
 )
 
 // Matrix represents the pipeline matrix.
@@ -44,13 +45,22 @@ func (a Axis) String() string {
 }
 
 // Parse parses the Yaml matrix definition.
-func Parse(data []byte) ([]Axis, error) {
-	axis, err := parseList(data)
-	if err == nil && len(axis) != 0 {
-		return axis, nil
+// limitAxis and limitTags control the maximum permutations and variable dimensions;
+// pass 0 to use the package defaults.
+func Parse(data []byte, limitAxis, limitTags int) ([]Axis, error) {
+	if limitAxis <= 0 {
+		limitAxis = defaultLimitAxis
+	}
+	if limitTags <= 0 {
+		limitTags = defaultLimitTags
 	}
 
-	matrix, err := parse(data)
+	include, excludeFromList, err := parseList(data)
+	if err == nil && len(include) != 0 {
+		return applyExclude(include, excludeFromList), nil
+	}
+
+	matrix, excludeFromMatrix, err := parse(data)
 	if err != nil {
 		return nil, err
 	}
@@ -59,15 +69,19 @@ func Parse(data []byte) ([]Axis, error) {
 		return []Axis{}, nil
 	}
 
-	return calc(matrix), nil
+	axisList, err := calc(matrix, limitAxis, limitTags)
+	if err != nil {
+		return axisList, err
+	}
+	return applyExclude(axisList, excludeFromMatrix), nil
 }
 
 // ParseString parses the Yaml string matrix definition.
 func ParseString(data string) ([]Axis, error) {
-	return Parse([]byte(data))
+	return Parse([]byte(data), 0, 0)
 }
 
-func calc(matrix Matrix) []Axis {
+func calc(matrix Matrix, limitAxis, limitTags int) ([]Axis, error) {
 	// calculate number of permutations and extract the list of tags
 	// (ie go_version, redis_version, etc)
 	var perm int
@@ -104,32 +118,92 @@ func calc(matrix Matrix) []Axis {
 
 		// enforce a maximum number of axis that should be calculated.
 		if p > limitAxis {
-			break
+			return axisList, &pipeline_errors.PipelineError{
+				Message: fmt.Sprintf("matrix exceeds maximum of %d axis", limitAxis),
+				Type:    pipeline_errors.PipelineErrorTypeCompiler,
+			}
 		}
 	}
 
-	return axisList
+	return axisList, nil
 }
 
-func parse(raw []byte) (Matrix, error) {
-	data := struct {
-		Matrix map[string][]string
-	}{}
-	if err := xyaml.Unmarshal(raw, &data); err != nil {
-		return nil, &pipeline_errors.PipelineError{Message: err.Error(), Type: pipeline_errors.PipelineErrorTypeCompiler}
+// applyExclude filters out any axis entries that match any exclude pattern.
+func applyExclude(axisList []Axis, excludes []Axis) []Axis {
+	if len(excludes) == 0 {
+		return axisList
 	}
-	return data.Matrix, nil
+	var result []Axis
+	for _, axis := range axisList {
+		excluded := false
+		for _, ex := range excludes {
+			if axisMatchesExclude(axis, ex) {
+				excluded = true
+				break
+			}
+		}
+		if !excluded {
+			result = append(result, axis)
+		}
+	}
+	return result
 }
 
-func parseList(raw []byte) ([]Axis, error) {
+// axisMatchesExclude returns true if all key-value pairs in exclude exist in axis.
+func axisMatchesExclude(axis, exclude Axis) bool {
+	for k, v := range exclude {
+		if axis[k] != v {
+			return false
+		}
+	}
+	return true
+}
+
+func parse(raw []byte) (Matrix, []Axis, error) {
+	// First extract exclude list
+	excludeData := struct {
+		Matrix struct {
+			Exclude []Axis `yaml:"exclude"`
+		}
+	}{}
+	_ = xyaml.Unmarshal(raw, &excludeData)
+
+	// Then parse the full map and remove reserved keys
+	fullData := struct {
+		Matrix map[string]interface{}
+	}{}
+	if err := xyaml.Unmarshal(raw, &fullData); err != nil {
+		return nil, nil, &pipeline_errors.PipelineError{Message: err.Error(), Type: pipeline_errors.PipelineErrorTypeCompiler}
+	}
+
+	matrix := Matrix{}
+	for k, v := range fullData.Matrix {
+		if k == "include" || k == "exclude" {
+			continue
+		}
+		slice, ok := v.([]interface{})
+		if !ok {
+			continue
+		}
+		var vals []string
+		for _, item := range slice {
+			vals = append(vals, fmt.Sprintf("%v", item))
+		}
+		matrix[k] = vals
+	}
+	return matrix, excludeData.Matrix.Exclude, nil
+}
+
+func parseList(raw []byte) ([]Axis, []Axis, error) {
 	data := struct {
 		Matrix struct {
 			Include []Axis
+			Exclude []Axis
 		}
 	}{}
 
 	if err := xyaml.Unmarshal(raw, &data); err != nil {
-		return nil, &pipeline_errors.PipelineError{Message: err.Error(), Type: pipeline_errors.PipelineErrorTypeCompiler}
+		return nil, nil, &pipeline_errors.PipelineError{Message: err.Error(), Type: pipeline_errors.PipelineErrorTypeCompiler}
 	}
-	return data.Matrix.Include, nil
+	return data.Matrix.Include, data.Matrix.Exclude, nil
 }

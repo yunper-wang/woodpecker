@@ -54,6 +54,8 @@ type StepBuilder struct {
 	TrustedClonePlugins []string
 	PrivilegedPlugins   []string
 	CompilerOptions     []compiler.Option
+	MaxMatrixAxis       int
+	MaxMatrixTags       int
 }
 
 type Item struct {
@@ -71,7 +73,7 @@ func (b *StepBuilder) Build() (items []*Item, errorsAndWarnings error) {
 
 	for _, y := range b.Yamls {
 		// matrix axes
-		axes, err := matrix.ParseString(string(y.Data))
+		axes, err := matrix.Parse(y.Data, b.MaxMatrixAxis, b.MaxMatrixTags)
 		if err != nil {
 			return nil, err
 		}

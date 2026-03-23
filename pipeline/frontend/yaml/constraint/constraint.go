@@ -100,8 +100,6 @@ func (when *When) IncludesStatusSuccess(metadata metadata.Metadata, global bool,
 		return true
 	}
 	for _, c := range when.Constraints {
-		matches, err := c.Match(metadata, global, env)
-		fmt.Println("mat", matches, err, c.Status)
 		if matches, err := c.Match(metadata, global, env); err == nil && matches {
 			if len(c.Status) > 0 && !slices.Contains(c.Status, statusSuccess) {
 				return false
@@ -176,8 +174,9 @@ func (c *Constraint) Match(m metadata.Metadata, global bool, env map[string]stri
 		c.Ref.Match(m.Curr.Commit.Ref) &&
 		c.Instance.Match(m.Sys.Host)
 
-	// changed files filter apply only for pull-request and push events
-	if metadata.EventIsPull(m.Curr.Event) || m.Curr.Event == metadata.EventPush {
+	// changed files filter apply for pull-request, push, tag and release events
+	if metadata.EventIsPull(m.Curr.Event) || m.Curr.Event == metadata.EventPush ||
+		m.Curr.Event == metadata.EventTag || m.Curr.Event == metadata.EventRelease {
 		match = match && c.Path.Match(m.Curr.Commit.ChangedFiles, m.Curr.Commit.Message)
 	}
 

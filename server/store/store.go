@@ -204,6 +204,16 @@ type Store interface {
 	// Org repos
 	OrgRepoList(*model.Org, *model.ListOptions) ([]*model.Repo, error)
 
+	// Approvals
+	ApprovalCreate(*model.Approval) error
+	ApprovalListForPipeline(pipelineID int64) ([]*model.Approval, error)
+
+	// Artifacts
+	ArtifactCreate(*model.Artifact) error
+	ArtifactFind(id int64) (*model.Artifact, error)
+	ArtifactListForPipeline(pipelineID int64) ([]*model.Artifact, error)
+	ArtifactDelete(id int64) error
+
 	// Store operations
 	Ping() error
 	Close() error

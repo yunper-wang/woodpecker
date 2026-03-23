@@ -534,6 +534,37 @@ func PostApproval(c *gin.Context) {
 	}
 }
 
+// GetApprovals
+//
+//	@Summary	Get approvals for a pipeline
+//	@Router		/repos/{repo_id}/pipelines/{number}/approvals [get]
+//	@Produce	json
+//	@Success	200	{array}		Approval
+//	@Tags		Pipelines
+//	@Param		Authorization	header	string	true	"Insert your personal access token"	default(Bearer <personal access token>)
+//	@Param		repo_id			path	int		true	"the repository id"
+//	@Param		number			path	int		true	"the number of the pipeline"
+func GetApprovals(c *gin.Context) {
+	_store := store.FromContext(c)
+	repo := session.Repo(c)
+	num, err := strconv.ParseInt(c.Params.ByName("number"), 10, 64)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	pl, err := _store.GetPipelineNumber(repo, num)
+	if err != nil {
+		handleDBError(c, err)
+		return
+	}
+	approvals, err := _store.ApprovalListForPipeline(pl.ID)
+	if err != nil {
+		_ = c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, approvals)
+}
+
 // PostDecline
 //
 //	@Summary	Decline a pipeline

@@ -111,6 +111,8 @@ func parsePipeline(ctx context.Context, forge forge.Forge, store store.Store, cu
 			Security: repo.Trusted.Security,
 		},
 		DefaultLabels: server.Config.Pipeline.DefaultWorkflowLabels,
+		MaxMatrixAxis: server.Config.Pipeline.MaxMatrixAxis,
+		MaxMatrixTags: server.Config.Pipeline.MaxMatrixTags,
 		CompilerOptions: []compiler.Option{
 			compiler.WithLocal(false),
 			compiler.WithRegistry(registries...),

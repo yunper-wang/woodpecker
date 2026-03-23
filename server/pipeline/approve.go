@@ -28,9 +28,43 @@ import (
 )
 
 // Approve update the status to pending for a blocked pipeline so it can be executed.
+// If repo.RequiredApprovals > 1, the pipeline remains blocked until enough approvals are collected.
 func Approve(ctx context.Context, store store.Store, currentPipeline *model.Pipeline, user *model.User, repo *model.Repo) (*model.Pipeline, error) {
 	if currentPipeline.Status != model.StatusBlocked {
 		return nil, ErrBadRequest{Msg: fmt.Sprintf("cannot approve a pipeline with status %s", currentPipeline.Status)}
+	}
+
+	// record this user's approval
+	approval := &model.Approval{
+		PipelineID: currentPipeline.ID,
+		UserID:     user.ID,
+		UserLogin:  user.Login,
+		Action:     "approve",
+	}
+	if err := store.ApprovalCreate(approval); err != nil {
+		return nil, fmt.Errorf("error recording approval: %w", err)
+	}
+
+	// check if required approvals threshold is reached
+	required := repo.RequiredApprovals
+	if required <= 0 {
+		required = 1
+	}
+	approvals, err := store.ApprovalListForPipeline(currentPipeline.ID)
+	if err != nil {
+		return nil, fmt.Errorf("error loading approvals: %w", err)
+	}
+	approveCount := 0
+	seen := map[int64]bool{}
+	for _, a := range approvals {
+		if a.Action == "approve" && !seen[a.UserID] {
+			seen[a.UserID] = true
+			approveCount++
+		}
+	}
+	if approveCount < required {
+		// not enough approvals yet; keep pipeline blocked
+		return currentPipeline, nil
 	}
 
 	forge, err := server.Config.Services.Manager.ForgeFromRepo(repo)

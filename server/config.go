@@ -78,6 +78,8 @@ var Config = struct {
 		PrivilegedPlugins                   []string
 		DefaultTimeout                      int64
 		MaxTimeout                          int64
+		MaxMatrixAxis                       int
+		MaxMatrixTags                       int
 		Proxy                               struct {
 			No    string
 			HTTP  string

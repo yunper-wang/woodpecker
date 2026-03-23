@@ -64,6 +64,7 @@ type Repo struct {
 	Trusted                      TrustedConfiguration `json:"trusted"                         xorm:"json 'trusted'"`
 	RequireApproval              ApprovalMode         `json:"require_approval"                xorm:"varchar(50) require_approval"`
 	ApprovalAllowedUsers         []string             `json:"approval_allowed_users"          xorm:"json approval_allowed_users"`
+	RequiredApprovals            int                  `json:"required_approvals"              xorm:"DEFAULT 1 'required_approvals'"`
 	IsActive                     bool                 `json:"active"                          xorm:"active"`
 	AllowPull                    bool                 `json:"allow_pr"                        xorm:"allow_pr"`
 	AllowDeploy                  bool                 `json:"allow_deploy"                    xorm:"allow_deploy"`

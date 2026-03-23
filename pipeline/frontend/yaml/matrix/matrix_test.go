@@ -64,11 +64,53 @@ matrix:
     - 2.8
 `
 
+func TestMatrixExclude(t *testing.T) {
+	axis, err := ParseString(fakeMatrixExclude)
+	assert.NoError(t, err)
+	// go1+3.2, go1+3.3, go1.2+3.3 (go1.2+3.2 is excluded)
+	assert.Len(t, axis, 3)
+	for _, a := range axis {
+		assert.False(t, a["go_version"] == "go1.2" && a["python_version"] == "3.2", "excluded axis should not appear")
+	}
+}
+
+func TestMatrixIncludeExclude(t *testing.T) {
+	axis, err := ParseString(fakeMatrixIncludeExclude)
+	assert.NoError(t, err)
+	assert.Len(t, axis, 1)
+	assert.Equal(t, "1.6", axis[0]["go_version"])
+}
+
 var fakeMatrixInclude = `
 matrix:
   include:
     - go_version: 1.5
       python_version: 3.4
     - go_version: 1.6
+      python_version: 3.4
+`
+
+var fakeMatrixExclude = `
+matrix:
+  go_version:
+    - go1
+    - go1.2
+  python_version:
+    - 3.2
+    - 3.3
+  exclude:
+    - go_version: go1.2
+      python_version: 3.2
+`
+
+var fakeMatrixIncludeExclude = `
+matrix:
+  include:
+    - go_version: 1.5
+      python_version: 3.4
+    - go_version: 1.6
+      python_version: 3.4
+  exclude:
+    - go_version: 1.5
       python_version: 3.4
 `

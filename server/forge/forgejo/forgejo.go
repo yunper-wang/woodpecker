@@ -537,6 +537,15 @@ func (c *Forgejo) Hook(ctx context.Context, r *http.Request) (*model.Repo, *mode
 		}
 	}
 
+	if pipeline != nil && (pipeline.Event == model.EventTag || pipeline.Event == model.EventRelease) && len(pipeline.ChangedFiles) == 0 && pipeline.Commit != "" {
+		files, err := c.getChangedFilesForCommit(ctx, repo, pipeline.Commit)
+		if err != nil {
+			log.Error().Err(err).Msgf("could not get changed files for commit %s in %s", pipeline.Commit, repo.FullName)
+		} else {
+			pipeline.ChangedFiles = files
+		}
+	}
+
 	return repo, pipeline, nil
 }
 
@@ -672,6 +681,42 @@ func (c *Forgejo) getChangedFilesForPR(ctx context.Context, repo *model.Repo, in
 		}
 		return files, nil
 	}, -1)
+}
+
+func (c *Forgejo) getChangedFilesForCommit(ctx context.Context, repo *model.Repo, commitSHA string) ([]string, error) {
+	_store, ok := store.TryFromContext(ctx)
+	if !ok {
+		log.Error().Msg("could not get store from context")
+		return []string{}, nil
+	}
+
+	repo, err := _store.GetRepoNameFallback(c.id, repo.ForgeRemoteID, repo.FullName)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := _store.GetUser(repo.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	forge.Refresh(ctx, c, _store, user)
+
+	client, err := c.newClientToken(ctx, user.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	commit, _, err := client.GetSingleCommit(repo.Owner, repo.Name, commitSHA)
+	if err != nil {
+		return nil, err
+	}
+
+	var files []string
+	for _, f := range commit.Files {
+		files = append(files, f.Filename)
+	}
+	return files, nil
 }
 
 func (c *Forgejo) getTagCommitSHA(ctx context.Context, repo *model.Repo, tagName string) (string, error) {

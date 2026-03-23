@@ -114,10 +114,17 @@ func apiRoutes(e *gin.RouterGroup) {
 					repo.GET("/pipelines/:number/config", api.GetPipelineConfig)
 					repo.GET("/pipelines/:number/metadata", session.MustPush, api.GetPipelineMetadata)
 
+					// artifacts
+					repo.GET("/pipelines/:number/artifacts", api.GetArtifacts)
+					repo.POST("/pipelines/:number/artifacts", session.MustPush, api.UploadArtifact)
+					repo.GET("/pipelines/:number/artifacts/:artifact_id", api.DownloadArtifact)
+					repo.DELETE("/pipelines/:number/artifacts/:artifact_id", session.MustPush, api.DeleteArtifact)
+
 					// requires push permissions
 					repo.POST("/pipelines/:number", session.MustPush, api.PostPipeline)
 					repo.POST("/pipelines/:number/cancel", session.MustPush, api.CancelPipeline)
 					repo.POST("/pipelines/:number/approve", session.MustPush, api.PostApproval)
+					repo.GET("/pipelines/:number/approvals", session.MustPush, api.GetApprovals)
 					repo.POST("/pipelines/:number/decline", session.MustPush, api.PostDecline)
 
 					repo.GET("/logs/:number/:stepId", api.GetStepLogs)

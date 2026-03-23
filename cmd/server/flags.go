@@ -197,6 +197,18 @@ var flags = append([]cli.Flag{
 		Usage:   "The maximum time in minutes you can set in the repo settings before a pipeline gets killed",
 		Value:   120,
 	},
+	&cli.IntFlag{
+		Sources: cli.EnvVars("WOODPECKER_MAX_MATRIX_AXIS"),
+		Name:    "max-matrix-axis",
+		Usage:   "The maximum number of axis permutations in a matrix pipeline",
+		Value:   25,
+	},
+	&cli.IntFlag{
+		Sources: cli.EnvVars("WOODPECKER_MAX_MATRIX_TAGS"),
+		Name:    "max-matrix-tags",
+		Usage:   "The maximum number of variable dimensions (tags) in a matrix pipeline",
+		Value:   10,
+	},
 	&cli.StringSliceFlag{
 		Sources: cli.EnvVars("WOODPECKER_DEFAULT_WORKFLOW_LABELS"),
 		Name:    "default-workflow-labels",

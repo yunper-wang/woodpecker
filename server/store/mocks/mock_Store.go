@@ -6691,3 +6691,246 @@ func (_c *MockStore_WorkflowsReplace_Call) RunAndReturn(run func(pipeline *model
 	_c.Call.Return(run)
 	return _c
 }
+
+// ArtifactCreate provides a mock function for the type MockStore
+func (_mock *MockStore) ArtifactCreate(artifact *model.Artifact) error {
+	ret := _mock.Called(artifact)
+	if len(ret) == 0 {
+		panic("no return value specified for ArtifactCreate")
+	}
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(*model.Artifact) error); ok {
+		r0 = returnFunc(artifact)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+type MockStore_ArtifactCreate_Call struct{ *mock.Call }
+
+func (_e *MockStore_Expecter) ArtifactCreate(artifact interface{}) *MockStore_ArtifactCreate_Call {
+	return &MockStore_ArtifactCreate_Call{Call: _e.mock.On("ArtifactCreate", artifact)}
+}
+
+func (_c *MockStore_ArtifactCreate_Call) Run(run func(artifact *model.Artifact)) *MockStore_ArtifactCreate_Call {
+	_c.Call.Run(func(args mock.Arguments) { run(args[0].(*model.Artifact)) })
+	return _c
+}
+
+func (_c *MockStore_ArtifactCreate_Call) Return(err error) *MockStore_ArtifactCreate_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockStore_ArtifactCreate_Call) RunAndReturn(run func(*model.Artifact) error) *MockStore_ArtifactCreate_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ArtifactFind provides a mock function for the type MockStore
+func (_mock *MockStore) ArtifactFind(id int64) (*model.Artifact, error) {
+	ret := _mock.Called(id)
+	if len(ret) == 0 {
+		panic("no return value specified for ArtifactFind")
+	}
+	var r0 *model.Artifact
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(int64) (*model.Artifact, error)); ok {
+		return returnFunc(id)
+	}
+	if returnFunc, ok := ret.Get(0).(func(int64) *model.Artifact); ok {
+		r0 = returnFunc(id)
+	} else if ret.Get(0) != nil {
+		r0 = ret.Get(0).(*model.Artifact)
+	}
+	if returnFunc, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = returnFunc(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+type MockStore_ArtifactFind_Call struct{ *mock.Call }
+
+func (_e *MockStore_Expecter) ArtifactFind(id interface{}) *MockStore_ArtifactFind_Call {
+	return &MockStore_ArtifactFind_Call{Call: _e.mock.On("ArtifactFind", id)}
+}
+
+func (_c *MockStore_ArtifactFind_Call) Run(run func(id int64)) *MockStore_ArtifactFind_Call {
+	_c.Call.Run(func(args mock.Arguments) { run(args[0].(int64)) })
+	return _c
+}
+
+func (_c *MockStore_ArtifactFind_Call) Return(artifact *model.Artifact, err error) *MockStore_ArtifactFind_Call {
+	_c.Call.Return(artifact, err)
+	return _c
+}
+
+func (_c *MockStore_ArtifactFind_Call) RunAndReturn(run func(int64) (*model.Artifact, error)) *MockStore_ArtifactFind_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ArtifactListForPipeline provides a mock function for the type MockStore
+func (_mock *MockStore) ArtifactListForPipeline(pipelineID int64) ([]*model.Artifact, error) {
+	ret := _mock.Called(pipelineID)
+	if len(ret) == 0 {
+		panic("no return value specified for ArtifactListForPipeline")
+	}
+	var r0 []*model.Artifact
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(int64) ([]*model.Artifact, error)); ok {
+		return returnFunc(pipelineID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(int64) []*model.Artifact); ok {
+		r0 = returnFunc(pipelineID)
+	} else if ret.Get(0) != nil {
+		r0 = ret.Get(0).([]*model.Artifact)
+	}
+	if returnFunc, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = returnFunc(pipelineID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+type MockStore_ArtifactListForPipeline_Call struct{ *mock.Call }
+
+func (_e *MockStore_Expecter) ArtifactListForPipeline(pipelineID interface{}) *MockStore_ArtifactListForPipeline_Call {
+	return &MockStore_ArtifactListForPipeline_Call{Call: _e.mock.On("ArtifactListForPipeline", pipelineID)}
+}
+
+func (_c *MockStore_ArtifactListForPipeline_Call) Run(run func(pipelineID int64)) *MockStore_ArtifactListForPipeline_Call {
+	_c.Call.Run(func(args mock.Arguments) { run(args[0].(int64)) })
+	return _c
+}
+
+func (_c *MockStore_ArtifactListForPipeline_Call) Return(artifacts []*model.Artifact, err error) *MockStore_ArtifactListForPipeline_Call {
+	_c.Call.Return(artifacts, err)
+	return _c
+}
+
+func (_c *MockStore_ArtifactListForPipeline_Call) RunAndReturn(run func(int64) ([]*model.Artifact, error)) *MockStore_ArtifactListForPipeline_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ArtifactDelete provides a mock function for the type MockStore
+func (_mock *MockStore) ArtifactDelete(id int64) error {
+	ret := _mock.Called(id)
+	if len(ret) == 0 {
+		panic("no return value specified for ArtifactDelete")
+	}
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(int64) error); ok {
+		r0 = returnFunc(id)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+type MockStore_ArtifactDelete_Call struct{ *mock.Call }
+
+func (_e *MockStore_Expecter) ArtifactDelete(id interface{}) *MockStore_ArtifactDelete_Call {
+	return &MockStore_ArtifactDelete_Call{Call: _e.mock.On("ArtifactDelete", id)}
+}
+
+func (_c *MockStore_ArtifactDelete_Call) Run(run func(id int64)) *MockStore_ArtifactDelete_Call {
+	_c.Call.Run(func(args mock.Arguments) { run(args[0].(int64)) })
+	return _c
+}
+
+func (_c *MockStore_ArtifactDelete_Call) Return(err error) *MockStore_ArtifactDelete_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockStore_ArtifactDelete_Call) RunAndReturn(run func(int64) error) *MockStore_ArtifactDelete_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ApprovalCreate provides a mock function for the type MockStore
+func (_mock *MockStore) ApprovalCreate(approval *model.Approval) error {
+	ret := _mock.Called(approval)
+	if len(ret) == 0 {
+		panic("no return value specified for ApprovalCreate")
+	}
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(*model.Approval) error); ok {
+		r0 = returnFunc(approval)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+type MockStore_ApprovalCreate_Call struct{ *mock.Call }
+
+func (_e *MockStore_Expecter) ApprovalCreate(approval interface{}) *MockStore_ApprovalCreate_Call {
+	return &MockStore_ApprovalCreate_Call{Call: _e.mock.On("ApprovalCreate", approval)}
+}
+
+func (_c *MockStore_ApprovalCreate_Call) Run(run func(approval *model.Approval)) *MockStore_ApprovalCreate_Call {
+	_c.Call.Run(func(args mock.Arguments) { run(args[0].(*model.Approval)) })
+	return _c
+}
+
+func (_c *MockStore_ApprovalCreate_Call) Return(err error) *MockStore_ApprovalCreate_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockStore_ApprovalCreate_Call) RunAndReturn(run func(*model.Approval) error) *MockStore_ApprovalCreate_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ApprovalListForPipeline provides a mock function for the type MockStore
+func (_mock *MockStore) ApprovalListForPipeline(pipelineID int64) ([]*model.Approval, error) {
+	ret := _mock.Called(pipelineID)
+	if len(ret) == 0 {
+		panic("no return value specified for ApprovalListForPipeline")
+	}
+	var r0 []*model.Approval
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(int64) ([]*model.Approval, error)); ok {
+		return returnFunc(pipelineID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(int64) []*model.Approval); ok {
+		r0 = returnFunc(pipelineID)
+	} else if ret.Get(0) != nil {
+		r0 = ret.Get(0).([]*model.Approval)
+	}
+	if returnFunc, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = returnFunc(pipelineID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+type MockStore_ApprovalListForPipeline_Call struct{ *mock.Call }
+
+func (_e *MockStore_Expecter) ApprovalListForPipeline(pipelineID interface{}) *MockStore_ApprovalListForPipeline_Call {
+	return &MockStore_ApprovalListForPipeline_Call{Call: _e.mock.On("ApprovalListForPipeline", pipelineID)}
+}
+
+func (_c *MockStore_ApprovalListForPipeline_Call) Run(run func(pipelineID int64)) *MockStore_ApprovalListForPipeline_Call {
+	_c.Call.Run(func(args mock.Arguments) { run(args[0].(int64)) })
+	return _c
+}
+
+func (_c *MockStore_ApprovalListForPipeline_Call) Return(approvals []*model.Approval, err error) *MockStore_ApprovalListForPipeline_Call {
+	_c.Call.Return(approvals, err)
+	return _c
+}
+
+func (_c *MockStore_ApprovalListForPipeline_Call) RunAndReturn(run func(int64) ([]*model.Approval, error)) *MockStore_ApprovalListForPipeline_Call {
+	_c.Call.Return(run)
+	return _c
+}
