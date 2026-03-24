@@ -41,6 +41,7 @@ import Badge from '~/components/atomic/Badge.vue';
 import Icon from '~/components/atomic/Icon.vue';
 import IconButton from '~/components/atomic/IconButton.vue';
 import ListItem from '~/components/atomic/ListItem.vue';
+import { useConfirm } from '~/compositions/useConfirm';
 import type { Secret } from '~/lib/api/types';
 
 const props = defineProps<{
@@ -55,6 +56,7 @@ const emit = defineEmits<{
 }>();
 
 const i18n = useI18n();
+const { confirm } = useConfirm();
 
 const secrets = toRef(props, 'modelValue');
 
@@ -62,10 +64,9 @@ function editSecret(secret: Secret) {
   emit('edit', secret);
 }
 
-function deleteSecret(secret: Secret) {
-  // TODO: use proper dialog
-  // eslint-disable-next-line no-alert
-  if (!confirm(i18n.t('secrets.delete_confirm'))) {
+async function deleteSecret(secret: Secret) {
+  const ok = await confirm(i18n.t('secrets.delete_confirm'), i18n.t('secrets.delete'));
+  if (!ok) {
     return;
   }
   emit('delete', secret);

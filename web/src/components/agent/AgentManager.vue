@@ -38,6 +38,7 @@ import { useI18n } from 'vue-i18n';
 import Button from '~/components/atomic/Button.vue';
 import Settings from '~/components/layout/Settings.vue';
 import { useAsyncAction } from '~/compositions/useAsyncAction';
+import { useConfirm } from '~/compositions/useConfirm';
 import useNotifications from '~/compositions/useNotifications';
 import { usePagination } from '~/compositions/usePaginate';
 import type { Agent } from '~/lib/api/types';
@@ -56,6 +57,7 @@ const props = defineProps<{
 
 const notifications = useNotifications();
 const { t } = useI18n();
+const { confirm } = useConfirm();
 
 const selectedAgent = ref<Partial<Agent>>();
 const isEditingAgent = computed(() => !!selectedAgent.value?.id);
@@ -81,8 +83,8 @@ const { doSubmit: saveAgent, isLoading: isSaving } = useAsyncAction(async () => 
 });
 
 const { doSubmit: deleteAgent, isLoading: isDeleting } = useAsyncAction(async (_agent: Agent) => {
-  // eslint-disable-next-line no-alert
-  if (!confirm(t('admin.settings.agents.delete_confirm'))) {
+  const ok = await confirm(t('admin.settings.agents.delete_confirm'), t('admin.settings.agents.delete_agent'));
+  if (!ok) {
     return;
   }
 

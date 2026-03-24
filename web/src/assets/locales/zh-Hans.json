@@ -150,6 +150,9 @@
     "api": "API",
     "back": "返回",
     "cancel": "取消",
+    "confirm_modal": {
+        "confirm": "确认"
+    },
     "default": "默认",
     "docs": "文档",
     "documentation_for": "\"{topic}\"的文档",
@@ -247,6 +250,7 @@
                 "cancel": "取消",
                 "cancel_success": "流水线已被取消",
                 "canceled": "该步骤已被取消。",
+                "skipped": "该步骤已被跳过。",
                 "deploy": "部署",
                 "log_auto_scroll": "启用自动滚动",
                 "log_auto_scroll_off": "禁用自动滚动",
@@ -298,6 +302,7 @@
                 "pending": "等待中",
                 "running": "运行中",
                 "skipped": "已跳过",
+                "canceled": "已取消",
                 "started": "已启动",
                 "status": "状态：{status}",
                 "success": "成功"
@@ -323,7 +328,8 @@
             "view": "查看流水线",
             "cancel_info": {
                 "superseded_by": "#{pipelineId} 已取消",
-                "canceled_by_user": "{user} 已取消"
+                "canceled_by_user": "{user} 已取消",
+                "canceled_by_step": "因步骤 {step} 而取消"
             },
             "load_more": "加载更多"
         },
@@ -543,6 +549,7 @@
         "weeks_short": "周",
         "just_now": "刚刚"
     },
+    "registry_extension_endpoint": "镜像仓库扩展端点",
     "unknown_error": "发生了未知错误",
     "update_woodpecker": "请更新你的 Woodpecker 实例到 {0}",
     "url": "URL",
@@ -751,5 +758,49 @@
     "executable_desc": "Addon 的可执行文件的路径。",
     "developer_settings_to_create": "前往 {0} 并设置 OAuth 应用。",
     "config_extension_exclusive": "独占",
-    "config_extension_exclusive_desc": "启用后，将跳过所有其他代码托管平台的配置获取方式。"
+    "config_extension_exclusive_desc": "启用后，将跳过所有其他代码托管平台的配置获取方式。",
+    "help": {
+        "nav": "帮助",
+        "title": "使用手册",
+        "subtitle": "快速上手 Woodpecker CI，了解流水线配置、密钥管理等核心功能。",
+        "quickstart": {
+            "title": "快速开始",
+            "step1": { "title": "第一步：启用仓库", "desc": "登录后点击仓库，找到你的项目，点击启用即可将仓库接入 Woodpecker CI。" },
+            "step2": { "title": "第二步：创建流水线配置文件", "desc": "在仓库根目录创建 .woodpecker.yml 文件，定义构建步骤。" },
+            "step3": { "title": "第三步：推送代码触发流水线", "desc": "将代码推送到仓库后，Woodpecker 会自动检测到变更并执行流水线，可在仓库页面实时查看运行状态和日志。" }
+        },
+        "pipeline": {
+            "title": "流水线配置",
+            "steps": { "title": "步骤（Steps）", "desc": "每个步骤在独立的 Docker 容器中运行，可以指定镜像、命令、环境变量等。步骤按顺序执行，前一步失败则后续步骤默认跳过。" },
+            "events": { "title": "触发事件", "desc": "支持 push、pull_request、tag、release、cron、manual 等事件触发流水线，可通过 when 条件精确控制。" },
+            "matrix": { "title": "矩阵构建", "desc": "使用 matrix 配置可以对多个变量组合并行运行流水线，适用于多版本、多平台的兼容性测试。" },
+            "services": { "title": "服务容器", "desc": "通过 services 可以启动数据库、缓存等后台容器，流水线步骤可以直接访问这些服务（如 MySQL、Redis）。" },
+            "cron": { "title": "定时任务", "desc": "在仓库设置中配置定时任务，支持标准 Cron 表达式，可定期自动触发流水线。" }
+        },
+        "secrets": {
+            "nav": "密钥管理",
+            "title": "密钥管理",
+            "repo": { "title": "仓库密钥", "desc": "在仓库设置中添加，仅对该仓库的流水线可用，适合存储仓库专属的敏感信息。" },
+            "org": { "title": "组织密钥", "desc": "在组织设置中添加，对该组织下所有仓库的流水线可用，适合团队共享的凭据。" },
+            "global": { "title": "全局密钥", "desc": "由管理员在系统设置中添加，对所有仓库可用，仅管理员可操作。" },
+            "usage": { "title": "在流水线中使用密钥", "desc": "在 .woodpecker.yml 中通过 environment 或 secrets 字段引用密钥名称，密钥值会以环境变量形式注入到步骤容器中。" }
+        },
+        "faq": {
+            "title": "常见问题",
+            "agent": { "q": "流水线一直处于等待中，怎么办？", "a": "请检查是否有 Agent 正在运行并已连接到服务器。在管理员设置中可以查看 Agent 状态，若没有 Agent，流水线将无法执行。" },
+            "fail": { "q": "流水线失败了，如何排查？", "a": "点击失败的流水线，查看具体步骤的日志输出。常见原因包括命令执行错误、镜像拉取失败、密钥未配置等。" },
+            "env": { "q": "如何在流水线中使用环境变量？", "a": "可以在步骤中通过 environment 字段定义环境变量，也可以引用已配置的密钥。Woodpecker 还会自动注入 CI_COMMIT_SHA、CI_REPO_NAME 等内置变量。" },
+            "skip": { "q": "如何跳过某次提交的 CI 检查？", "a": "在 Git 提交信息中包含 [skip ci] 或 [ci skip] 即可跳过该次提交的流水线触发。" },
+            "badge": { "q": "如何在 README 中显示构建状态徽标？", "a": "在仓库设置的徽标页面可以获取 Markdown、HTML 或 URL 格式的徽标代码，粘贴到 README 文件即可显示实时构建状态。" }
+        },
+        "shortcuts": {
+            "title": "键盘快捷键",
+            "key": "快捷键",
+            "action": "功能",
+            "show_help": "显示帮助页面",
+            "go_home": "跳转到仓库列表",
+            "go_settings": "跳转到用户设置",
+            "close": "关闭弹窗 / 返回"
+        }
+    }
 }

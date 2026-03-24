@@ -135,6 +135,7 @@ import IconButton from '~/components/atomic/IconButton.vue';
 import PipelineStatusIcon from '~/components/repo/pipeline/PipelineStatusIcon.vue';
 import useApiClient from '~/compositions/useApiClient';
 import useConfig from '~/compositions/useConfig';
+import { useConfirm } from '~/compositions/useConfirm';
 import { requiredInject } from '~/compositions/useInjectProvide';
 import useNotifications from '~/compositions/useNotifications';
 import type { Pipeline, PipelineStep, PipelineWorkflow } from '~/lib/api/types';
@@ -158,6 +159,7 @@ defineEmits<{
 
 const notifications = useNotifications();
 const i18n = useI18n();
+const { confirm } = useConfirm();
 const pipeline = toRef(props, 'pipeline');
 const stepId = toRef(props, 'stepId');
 const repo = requiredInject('repo');
@@ -345,9 +347,8 @@ async function deleteLogs() {
     throw new Error('The repository, pipeline or step was undefined');
   }
 
-  // TODO: use proper dialog (copy-pasted from web/src/components/secrets/SecretList.vue:deleteSecret)
-  // eslint-disable-next-line no-alert
-  if (!confirm(i18n.t('repo.pipeline.log_delete_confirm'))) {
+  const ok = await confirm(i18n.t('repo.pipeline.log_delete_confirm'), i18n.t('repo.pipeline.actions.log_delete'));
+  if (!ok) {
     return;
   }
 

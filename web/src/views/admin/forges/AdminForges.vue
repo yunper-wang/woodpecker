@@ -48,6 +48,7 @@ import ListItem from '~/components/atomic/ListItem.vue';
 import Settings from '~/components/layout/Settings.vue';
 import useApiClient from '~/compositions/useApiClient';
 import { useAsyncAction } from '~/compositions/useAsyncAction';
+import { useConfirm } from '~/compositions/useConfirm';
 import useNotifications from '~/compositions/useNotifications';
 import { usePagination } from '~/compositions/usePaginate';
 import type { Forge } from '~/lib/api/types';
@@ -55,6 +56,7 @@ import type { Forge } from '~/lib/api/types';
 const apiClient = useApiClient();
 const notifications = useNotifications();
 const { t } = useI18n();
+const { confirm } = useConfirm();
 
 async function loadForges(page: number): Promise<Forge[] | null> {
   return apiClient.getForges({ page });
@@ -63,8 +65,8 @@ async function loadForges(page: number): Promise<Forge[] | null> {
 const { resetPage, data: forges, loading } = usePagination(loadForges);
 
 const { doSubmit: deleteForge, isLoading: isDeleting } = useAsyncAction(async (_forge: Forge) => {
-  // eslint-disable-next-line no-alert
-  if (!confirm(t('forge_delete_confirm'))) {
+  const ok = await confirm(t('forge_delete_confirm'), t('delete_forge'));
+  if (!ok) {
     return;
   }
 

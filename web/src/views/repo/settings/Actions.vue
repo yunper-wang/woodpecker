@@ -50,6 +50,7 @@ import Button from '~/components/atomic/Button.vue';
 import Settings from '~/components/layout/Settings.vue';
 import useApiClient from '~/compositions/useApiClient';
 import { useAsyncAction } from '~/compositions/useAsyncAction';
+import { useConfirm } from '~/compositions/useConfirm';
 import { requiredInject } from '~/compositions/useInjectProvide';
 import useNotifications from '~/compositions/useNotifications';
 import { useWPTitle } from '~/compositions/useWPTitle';
@@ -58,6 +59,7 @@ const apiClient = useApiClient();
 const router = useRouter();
 const notifications = useNotifications();
 const i18n = useI18n();
+const { confirm } = useConfirm();
 
 const repo = requiredInject('repo');
 
@@ -67,9 +69,8 @@ const { doSubmit: repairRepo, isLoading: isRepairingRepo } = useAsyncAction(asyn
 });
 
 const { doSubmit: deleteRepo, isLoading: isDeletingRepo } = useAsyncAction(async () => {
-  // TODO: use proper dialog
-  // eslint-disable-next-line no-alert
-  if (!confirm(i18n.t('repo.settings.actions.delete.confirm'))) {
+  const ok = await confirm(i18n.t('repo.settings.actions.delete.confirm'), i18n.t('repo.settings.actions.delete.delete'));
+  if (!ok) {
     return;
   }
 

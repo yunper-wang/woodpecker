@@ -38,6 +38,7 @@ import { useI18n } from 'vue-i18n';
 import Icon from '~/components/atomic/Icon.vue';
 import IconButton from '~/components/atomic/IconButton.vue';
 import ListItem from '~/components/atomic/ListItem.vue';
+import { useConfirm } from '~/compositions/useConfirm';
 import type { Registry } from '~/lib/api/types';
 
 const props = defineProps<{
@@ -52,6 +53,7 @@ const emit = defineEmits<{
 }>();
 
 const i18n = useI18n();
+const { confirm } = useConfirm();
 
 const registries = toRef(props, 'modelValue');
 
@@ -59,10 +61,9 @@ function editRegistry(registry: Registry) {
   emit('edit', registry);
 }
 
-function deleteRegistry(registry: Registry) {
-  // TODO: use proper dialog
-  // eslint-disable-next-line no-alert
-  if (!confirm(i18n.t('registries.delete_confirm'))) {
+async function deleteRegistry(registry: Registry) {
+  const ok = await confirm(i18n.t('registries.delete_confirm'), i18n.t('registries.delete'));
+  if (!ok) {
     return;
   }
   emit('delete', registry);

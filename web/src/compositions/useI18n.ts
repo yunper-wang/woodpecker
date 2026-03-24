@@ -7,8 +7,13 @@ import { useDate } from './useDate';
 
 export function getUserLanguage(): string {
   let browserLocale = navigator.language;
+  // 优先使用简体中文
+  const defaultLocale = SUPPORTED_LOCALES.includes('zh-Hans') ? 'zh-Hans' : 'en';
   if (!SUPPORTED_LOCALES.includes(browserLocale)) {
     browserLocale = browserLocale.split('-')[0];
+  }
+  if (!SUPPORTED_LOCALES.includes(browserLocale)) {
+    browserLocale = defaultLocale;
   }
   const selectedLocale = useStorage('woodpecker:locale', browserLocale).value;
 

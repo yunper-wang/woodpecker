@@ -604,5 +604,52 @@
   "exit_fullscreen": "Exit fullscreen",
   "help_translating": "You can help translate Woodpecker into your language on {0}.",
   "weblate": "our Weblate",
-  "disabled": "Disabled"
+  "disabled": "Disabled",
+  "confirm_modal": {
+    "confirm": "Confirm"
+  },
+  "help": {
+    "nav": "Help",
+    "title": "User Guide",
+    "subtitle": "Get started with Woodpecker CI and learn about pipelines, secrets, and more.",
+    "quickstart": {
+      "title": "Quick Start",
+      "step1": { "title": "Step 1: Enable a Repository", "desc": "After logging in, go to Repositories, find your project and click Enable to connect it to Woodpecker CI." },
+      "step2": { "title": "Step 2: Create a Pipeline Config", "desc": "Create a .woodpecker.yml file in your repository root to define your build steps." },
+      "step3": { "title": "Step 3: Push Code to Trigger a Pipeline", "desc": "After pushing code to your repository, Woodpecker will automatically detect the change and run the pipeline. You can monitor the status and logs in real time." }
+    },
+    "pipeline": {
+      "title": "Pipeline Configuration",
+      "steps": { "title": "Steps", "desc": "Each step runs in an isolated Docker container. You can specify the image, commands, and environment variables. Steps run sequentially; if one fails, subsequent steps are skipped by default." },
+      "events": { "title": "Trigger Events", "desc": "Pipelines can be triggered by push, pull_request, tag, release, cron, and manual events. Use when conditions for fine-grained control." },
+      "matrix": { "title": "Matrix Builds", "desc": "Use matrix configuration to run pipelines in parallel across multiple variable combinations, ideal for multi-version or multi-platform testing." },
+      "services": { "title": "Service Containers", "desc": "Use services to start background containers like databases or caches that pipeline steps can access directly." },
+      "cron": { "title": "Scheduled Jobs", "desc": "Configure cron jobs in repository settings to trigger pipelines on a schedule using standard cron expressions." }
+    },
+    "secrets": {
+      "nav": "Secrets",
+      "title": "Secret Management",
+      "repo": { "title": "Repository Secrets", "desc": "Added in repository settings, available only to that repository's pipelines. Ideal for repo-specific credentials." },
+      "org": { "title": "Organization Secrets", "desc": "Added in organization settings, available to all repositories in the organization. Ideal for shared team credentials." },
+      "global": { "title": "Global Secrets", "desc": "Added by admins in system settings, available to all repositories. Use with caution." },
+      "usage": { "title": "Using Secrets in Pipelines", "desc": "Reference secret names via the environment or secrets fields in .woodpecker.yml. Secret values are injected as environment variables into step containers." }
+    },
+    "faq": {
+      "title": "FAQ",
+      "agent": { "q": "Pipeline is stuck in pending, what should I do?", "a": "Check that an agent is running and connected to the server. You can view agent status in Admin Settings → Agents. Pipelines cannot run without an agent." },
+      "fail": { "q": "My pipeline failed, how do I debug it?", "a": "Click on the failed pipeline and check the step log output. Common causes include command errors, image pull failures, or missing secrets." },
+      "env": { "q": "How do I use environment variables in pipelines?", "a": "Define variables via the environment field in a step, or reference configured secrets. Woodpecker also injects built-in variables like CI_COMMIT_SHA and CI_REPO_NAME." },
+      "skip": { "q": "How do I skip CI for a commit?", "a": "Include [skip ci] or [ci skip] in your git commit message to skip pipeline triggering for that commit." },
+      "badge": { "q": "How do I show a build status badge in my README?", "a": "Go to Repository Settings → Badge to get Markdown, HTML, or URL badge code to paste into your README." }
+    },
+    "shortcuts": {
+      "title": "Keyboard Shortcuts",
+      "key": "Shortcut",
+      "action": "Action",
+      "show_help": "Show help page",
+      "go_home": "Go to repository list",
+      "go_settings": "Go to user settings",
+      "close": "Close modal / Go back"
+    }
+  }
 }

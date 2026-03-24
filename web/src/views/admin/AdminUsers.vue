@@ -101,6 +101,7 @@ import TextField from '~/components/form/TextField.vue';
 import Settings from '~/components/layout/Settings.vue';
 import useApiClient from '~/compositions/useApiClient';
 import { useAsyncAction } from '~/compositions/useAsyncAction';
+import { useConfirm } from '~/compositions/useConfirm';
 import useNotifications from '~/compositions/useNotifications';
 import { usePagination } from '~/compositions/usePaginate';
 import { useWPTitle } from '~/compositions/useWPTitle';
@@ -109,6 +110,7 @@ import type { User } from '~/lib/api/types';
 const apiClient = useApiClient();
 const notifications = useNotifications();
 const { t } = useI18n();
+const { confirm } = useConfirm();
 
 const selectedUser = ref<Partial<User>>();
 const isEditingUser = computed(() => !!selectedUser.value?.id);
@@ -142,8 +144,8 @@ const { doSubmit: saveUser, isLoading: isSaving } = useAsyncAction(async () => {
 });
 
 const { doSubmit: deleteUser, isLoading: isDeleting } = useAsyncAction(async (_user: User) => {
-  // eslint-disable-next-line no-alert
-  if (!confirm(t('admin.settings.users.delete_confirm'))) {
+  const ok = await confirm(t('admin.settings.users.delete_confirm'), t('admin.settings.users.delete_user'));
+  if (!ok) {
     return;
   }
 

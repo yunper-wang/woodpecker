@@ -15,6 +15,13 @@
       </main>
     </template>
     <notifications position="bottom right" />
+    <ConfirmModal
+      v-model="confirmState.visible.value"
+      :title="confirmState.title.value"
+      :text="confirmState.text.value"
+      @confirm="confirmState.onConfirm"
+      @update:model-value="(v) => { if (!v) confirmState.onCancel(); }"
+    />
   </div>
 </template>
 
@@ -24,9 +31,15 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
 import Navbar from '~/components/layout/header/Navbar.vue';
+import ConfirmModal from '~/components/atomic/ConfirmModal.vue';
 import PipelineFeedSidebar from '~/components/pipeline-feed/PipelineFeedSidebar.vue';
 import useApiClient from '~/compositions/useApiClient';
 import useNotifications from '~/compositions/useNotifications';
+import { useConfirm } from '~/compositions/useConfirm';
+import { useKeyboardShortcuts } from '~/compositions/useKeyboardShortcuts';
+
+const confirmState = useConfirm();
+useKeyboardShortcuts();
 
 const route = useRoute();
 const apiClient = useApiClient();

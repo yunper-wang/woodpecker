@@ -57,6 +57,8 @@
   <SvgIcon v-else-if="name === 'status-success'" :bg-circle="bgCircle" :path="mdiCheckCircle" size="1.3rem" />
   <SvgIcon v-else-if="name === 'alert'" :bg-circle="bgCircle" :path="mdiAlertCircle" size="1.3rem" />
   <SvgIcon v-else-if="name === 'question'" :bg-circle="bgCircle" :path="mdiHelpCircle" size="1.3rem" />
+  <SvgIcon v-else-if="name === 'help'" :bg-circle="bgCircle" :path="mdiHelpCircle" size="1.3rem" />
+  <SvgIcon v-else-if="name === 'lock'" :bg-circle="bgCircle" :path="mdiLockOutline" size="1.3rem" />
   <SvgIcon v-else-if="name === 'plus'" :bg-circle="bgCircle" :path="mdiPlus" size="1.3rem" />
   <SvgIcon v-else-if="name === 'list'" :bg-circle="bgCircle" :path="mdiFormatListBulleted" size="1.3rem" />
   <SvgIcon v-else-if="name === 'heal'" :bg-circle="bgCircle" :path="mdiWrenchCogOutline" size="1.3rem" />
@@ -228,6 +230,8 @@ export type IconNames =
   | 'bitbucket-dc'
   | 'forgejo'
   | 'question'
+  | 'help'
+  | 'lock'
   | 'list'
   | 'plus'
   | 'blank'

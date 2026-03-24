@@ -14,6 +14,9 @@
       <a href="https://woodpecker-ci.org/" target="_blank" class="navbar-clickable navbar-link hidden md:flex">{{
         $t('docs')
       }}</a>
+      <router-link v-if="user" :to="{ name: 'help' }" class="navbar-clickable navbar-link hidden md:flex">{{
+        $t('help.nav')
+      }}</router-link>
       <a v-if="enableSwagger" :href="apiUrl" target="_blank" class="navbar-clickable navbar-link hidden md:flex">{{
         $t('api')
       }}</a>
